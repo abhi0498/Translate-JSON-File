@@ -1,6 +1,6 @@
 {
   "name": "translate-json-file",
-  "version": "2.0.0",
+  "version": "2.0.2",
   "main": "index.js",
   "bin": "index.js",
   "description": "Translate JSON file using Google Translate",

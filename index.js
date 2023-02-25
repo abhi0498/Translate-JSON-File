@@ -88,7 +88,7 @@ async function configure() {
   ]);
 
   const browser = await chromium.launch({
-    headless: true,
+    headless: false,
   });
   const page = await browser.newPage();
 
@@ -126,10 +126,10 @@ async function configure() {
       await page.getByRole("button", { name: "Clear source text" }).click();
     }
 
-    const placeHolderText = "'API'";
+    const placeHolderText = Math.random().toString().substring(7).toUpperCase();
 
     const stringToTranslate =
-      `${placeHolderText} ` +
+      `${placeHolderText}   ` +
       pageKeys.map((key) => lodash.get(engJson, key)).join("\n\n"); //add a random string to get the translation
 
     await page
@@ -142,7 +142,7 @@ async function configure() {
       .last()
       .textContent();
 
-    string = string.replace(placeHolderText, ""); //remove the random string
+    string = string.replace(new RegExp(placeHolderText), ""); //remove the random string
     string = lodash.upperFirst(string); // capitalize the first letter
 
     completedCount += pageKeys.length;
