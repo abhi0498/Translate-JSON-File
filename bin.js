@@ -122,7 +122,8 @@ const main = async () => {
           optionList: optionDefinitions,
         },
         {
-          content: "Project home: {underline https://github.com/me/example}",
+          content:
+            "Project home: {underline https://github.com/abhi0498/Translate-JSON-File.git}",
         },
       ]);
       console.log(usage);
