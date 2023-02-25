@@ -1,5 +1,10 @@
 # Translate JSON File
 
+[![npm](https://img.shields.io/npm/v/translate-json-file)](https://www.npmjs.com/package/translate-json-file)
+[![GitHub issues](https://img.shields.io/github/issues/abhi0498/translate-json-file)](https://github.com/abhi0498/translate-json-file/issues)
+[![GitHub license](https://img.shields.io/github/license/abhi0498/translate-json-file)](https://github.com/abhi0498/translate-json-file/blob/main/LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/abhi0498/translate-json-file)](https://github.com/abhi0498/translate-json-file/stargazers)
+
 ## Usage
 
 ```bash
