@@ -8,22 +8,17 @@ import cliProgress from "cli-progress";
 import { promisify } from "util";
 import { exec } from "child_process";
 import ora from "ora";
+import inquirerPrompt from "inquirer-autocomplete-prompt";
 
+import languagesJson from "./assets/languages.json" assert { type: "json" };
+
+inquirer.registerPrompt("autocomplete", inquirerPrompt);
 const execAsync = promisify(exec);
 
 const bar1 = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
 
 function getLocale(language) {
-  switch (language) {
-    case "FRENCH":
-      return "fr";
-    case "SPANISH":
-      return "es";
-    case "KANNADA":
-      return "kn";
-    default:
-      return "en";
-  }
+  return languagesJson[language];
 }
 
 function flatten(object, addToList, prefix) {
@@ -61,6 +56,7 @@ async function configure() {
   let moduleEnJson;
 
   await configure();
+  const allLanguages = Object.keys(languagesJson);
 
   const sourceAndLanguage = await inquirer.prompt([
     {
@@ -80,10 +76,14 @@ async function configure() {
       },
     },
     {
-      type: "list",
+      type: "autocomplete",
       name: "language",
       message: "Select language",
-      choices: ["KANNADA", "FRENCH", "SPANISH"],
+      source: async (answersSoFar, input = "") => {
+        return allLanguages.filter((language) =>
+          language.toLowerCase().includes(input.toLowerCase())
+        );
+      },
     },
   ]);
 
@@ -192,5 +192,10 @@ async function configure() {
   console.log(
     `\x1b[32m%s\x1b[0m`,
     `File written to ${destination.destinationPath}`
+  );
+
+  console.log(
+    `\x1b[32m%s\x1b[0m`,
+    "Thank you for using this package 🤗. If you faced any issues, please raise an issue on https://github.com/abhi0498/Translate-JSON-File.git"
   );
 })();
