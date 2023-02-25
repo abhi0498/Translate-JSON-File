@@ -1,91 +1,21 @@
-#!/usr/bin/env node
-
 import { chromium } from "playwright";
-import inquirer from "inquirer";
-import { readFileSync, writeFileSync } from "fs";
 import lodash from "lodash";
 import cliProgress from "cli-progress";
-import { promisify } from "util";
-import { exec } from "child_process";
-import ora from "ora";
-import inquirerPrompt from "inquirer-autocomplete-prompt";
 
-import languagesJson from "./assets/languages.json" assert { type: "json" };
+import configure from "./utils/configure.js";
+import { flatten, getLocale, readJSON } from "./utils/helpers.js";
 
-inquirer.registerPrompt("autocomplete", inquirerPrompt);
-const execAsync = promisify(exec);
+const translate = async (sourcePath, language) => {
+  const bar1 = new cliProgress.SingleBar(
+    {},
+    cliProgress.Presets.shades_classic
+  );
 
-const bar1 = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
-
-function getLocale(language) {
-  return languagesJson[language];
-}
-
-function flatten(object, addToList, prefix) {
-  Object.keys(object).map((key) => {
-    if (object[key] === null) {
-      addToList[prefix + key] = "";
-    } else if (object[key] instanceof Array) {
-      for (i in object[key]) {
-        flatten(object[key][i], addToList, prefix + key + "." + i);
-      }
-    } else if (
-      typeof object[key] == "object" &&
-      !object[key].toLocaleDateString
-    ) {
-      flatten(object[key], addToList, prefix + key + ".");
-    } else {
-      addToList[prefix + key] = object[key];
-    }
-  });
-  return addToList;
-}
-
-async function configure() {
-  const spinner = ora({
-    color: "yellow",
-    text: "Installing Playwright",
-  }).start();
-
-  const { stdout } = await execAsync("npx playwright install");
-
-  spinner.succeed("Successfully installed Playwright");
-}
-
-(async () => {
   let moduleEnJson;
 
   await configure();
-  const allLanguages = Object.keys(languagesJson);
 
-  const sourceAndLanguage = await inquirer.prompt([
-    {
-      type: "input",
-      name: "sourcePath",
-      message: "Enter source JSON file path (English)",
-      default: "./appModule.json",
-      validate: (value) => {
-        try {
-          const a = readFileSync(value);
-          moduleEnJson = JSON.parse(a);
-          return true;
-        } catch (error) {
-          console.log(error);
-          return "Please enter valid path";
-        }
-      },
-    },
-    {
-      type: "autocomplete",
-      name: "language",
-      message: "Select language",
-      source: async (answersSoFar, input = "") => {
-        return allLanguages.filter((language) =>
-          language.toLowerCase().includes(input.toLowerCase())
-        );
-      },
-    },
-  ]);
+  moduleEnJson = readJSON(sourcePath);
 
   const browser = await chromium.launch({
     headless: false,
@@ -103,7 +33,7 @@ async function configure() {
 
   await page.goto(
     `https://translate.google.com/?sl=auto&tl=${getLocale(
-      sourceAndLanguage.language
+      language
     )}&op=translate`
   );
 
@@ -169,33 +99,7 @@ async function configure() {
 
   bar1.stop();
 
-  const destination = await inquirer.prompt([
-    {
-      type: "input",
-      name: "destinationPath",
-      message: "Enter destination JSON file path",
-      default: "./appModule.json",
-      validate: (value) => {
-        try {
-          return true;
-        } catch (error) {
-          console.log(error);
-          return "Please enter valid path";
-        }
-      },
-    },
-  ]);
-  writeFileSync(
-    destination.destinationPath,
-    JSON.stringify(finalJson, null, 2)
-  );
-  console.log(
-    `\x1b[32m%s\x1b[0m`,
-    `File written to ${destination.destinationPath}`
-  );
+  return finalJson;
+};
 
-  console.log(
-    `\x1b[32m%s\x1b[0m`,
-    "Thank you for using this package 🤗. If you faced any issues, please raise an issue on https://github.com/abhi0498/Translate-JSON-File.git"
-  );
-})();
+export default translate;

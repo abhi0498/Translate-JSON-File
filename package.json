@@ -1,8 +1,8 @@
 {
   "name": "translate-json-file",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "main": "index.js",
-  "bin": "index.js",
+  "bin": "bin.js",
   "description": "Translate JSON file using Google Translate",
   "author": "Abhishek V <abhishekv.dev@gmail.com> (https://github.com/abhi0498)",
   "repository": {
@@ -40,9 +40,12 @@
   "license": "MIT",
   "dependencies": {
     "cli-progress": "^3.12.0",
+    "command-line-args": "^5.2.1",
+    "command-line-usage": "^6.1.3",
     "inquirer": "^9.1.4",
     "inquirer-autocomplete-prompt": "^3.0.0",
     "ora": "^6.1.2",
-    "playwright": "^1.31.1"
+    "playwright": "^1.31.1",
+    "yargs": "^17.7.1"
   }
 }

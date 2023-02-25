@@ -7,8 +7,38 @@
 
 ## Usage
 
+### Install
+
+```bash
+ yarn add translate-json-file
+```
+
+### Help
+
+```bash
+ npx translate-json-file@latest --help
+```
+
+### Use with questionnaire
+
 ```bash
  npx translate-json-file@latest
+```
+
+### Use with command line arguments
+
+```bash
+ npx translate-json-file@latest --input-file <input-file> --output-file <output-file> --language <language>
+```
+
+### Use in package.json
+
+```json
+{
+  "scripts": {
+    "translate": "translate-json-file --input-file <input-file> --output-file <output-file> --language <language>"
+  }
+}
 ```
 
 ## Supported Languages
