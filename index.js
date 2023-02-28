@@ -5,20 +5,16 @@ import cliProgress from "cli-progress";
 import configure from "./utils/configure.js";
 import { flatten, getLocale, readJSON } from "./utils/helpers.js";
 
-const translate = async (sourcePath, language) => {
+export const translate = async (moduleEnJson, language) => {
   const bar1 = new cliProgress.SingleBar(
     {},
     cliProgress.Presets.shades_classic
   );
 
-  let moduleEnJson;
-
   await configure();
 
-  moduleEnJson = readJSON(sourcePath);
-
   const browser = await chromium.launch({
-    headless: false,
+    headless: true,
   });
   const page = await browser.newPage();
 
@@ -39,11 +35,10 @@ const translate = async (sourcePath, language) => {
 
   await page.waitForSelector("text=English >> visible=true");
 
-  await page.waitForTimeout(2000);
-
   let shouldClearPreviousInput = false;
   const paginatedJson = [];
 
+  // divide the json into chunks of 50 keys
   Object.keys(engJson).forEach((key, index) => {
     if (index % 50 === 0) {
       paginatedJson.push([]);
@@ -102,4 +97,10 @@ const translate = async (sourcePath, language) => {
   return finalJson;
 };
 
-export default translate;
+const translateFile = async (sourcePath, language) => {
+  let moduleEnJson = readJSON(sourcePath);
+
+  return translate(moduleEnJson, language);
+};
+
+export default translateFile;

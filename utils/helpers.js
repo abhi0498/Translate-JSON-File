@@ -6,13 +6,15 @@ export function readJSON(value) {
   return JSON.parse(a);
 }
 
+const GREEN_COLOR = `\x1b[32m%s\x1b[0m`;
+
 export function writeFile(finalJson, destinationPath) {
   writeFileSync(destinationPath, JSON.stringify(finalJson, null, 2));
-  console.log(`\x1b[32m%s\x1b[0m`, `File written to ${destinationPath}`);
+  console.log(GREEN_COLOR, `File written to ${destinationPath}`);
 
   console.log(
-    `\x1b[32m%s\x1b[0m`,
-    "Thank you for using this package 🤗. If you faced any issues, please raise an issue on https://github.com/abhi0498/Translate-JSON-File.git"
+    GREEN_COLOR,
+    "Thank you for using this package 🤗. If you need any help, please create an issue on https://github.com/abhi0498/Translate-JSON-File"
   );
 }
 
@@ -20,6 +22,7 @@ export function getLocale(language) {
   return languagesJson[language] || language;
 }
 
+//function to flatten the json object
 export function flatten(object, addToList, prefix) {
   Object.keys(object).map((key) => {
     if (object[key] === null) {

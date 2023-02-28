@@ -100,17 +100,18 @@ async function questionnaireFlow() {
   writeFile(finalJson, destinationPath);
 }
 
+const RED_COLOR = "\x1b[31m%s\x1b[0m";
+
 const main = async () => {
-  //   console.log("Hello", args("help").argv);
-  if (
-    !options["input-file"] &&
-    !options["output-file"] &&
-    !options.language &&
-    !options.help
-  ) {
+  const inputFilePath = options["input-file"];
+  const destinationFilePath = options["output-file"];
+  const language = options.language;
+  const isHelpCommand = options.help;
+
+  if (!inputFilePath && !destinationFilePath && !language && !isHelpCommand) {
     await questionnaireFlow();
   } else {
-    if (options.help) {
+    if (isHelpCommand) {
       const usage = commandLineUsage([
         {
           header: "Typical Example",
@@ -128,23 +129,16 @@ const main = async () => {
       ]);
       console.log(usage);
     } else {
-      if (
-        !options["input-file"] ||
-        !options["output-file"] ||
-        !options.language
-      ) {
+      if (!inputFilePath || !destinationFilePath || !language) {
         //red log
         console.error(
-          "\x1b[31m%s\x1b[0m",
+          RED_COLOR,
           "Please provide all the required options. For usage, run translate-json-file --help"
         );
         return;
       } else {
-        const finalJson = await translate(
-          options["input-file"],
-          options.language
-        );
-        writeFile(finalJson, options["output-file"]);
+        const finalJson = await translate(inputFilePath, language);
+        writeFile(finalJson, destinationFilePath);
       }
     }
   }
