@@ -1,18 +1,36 @@
-import { chromium } from "playwright";
+import playwright from "playwright";
 import lodash from "lodash";
 import cliProgress from "cli-progress";
+import chromium from "chrome-aws-lambda";
 
 import configure from "./utils/configure.js";
 import { flatten, getLocale, readJSON } from "./utils/helpers.js";
 
-export const translate = async (moduleEnJson, language) => {
+export const translate = async (
+  moduleEnJson,
+  language,
+  isServerless = false
+) => {
   const bar1 = new cliProgress.SingleBar(
     {},
     cliProgress.Presets.shades_classic
   );
+  let options = {
+    headless: true,
+  };
 
-  await configure();
-
+  if (!isServerless) {
+    await configure();
+  } else {
+    options = {
+      ...options,
+      executablePath: await chromium.executablePath,
+      args: chromium.args,
+      defaultViewport: chromium.defaultViewport,
+      executablePath: await chromium.executablePath,
+      headless: chromium.headless,
+    };
+  }
   const browser = await chromium.launch({
     headless: true,
   });
